@@ -1,4 +1,4 @@
-name: Auto Sync from Public Repo
+name: Auto Sync and Rename
 
 on:
   schedule:
@@ -12,13 +12,26 @@ jobs:
       - name: Checkout My Repository
         uses: actions/checkout@v4
 
-      - name: Pull Files from Target Public Repo
+      - name: Pull and Rename Files from Target Public Repo
         run: |
           # ਉਸ ਰਿਪੋਜ਼ਟਰੀ ਨੂੰ ਟੈਂਪਰੇਰੀ ਕਲੋਨ ਕਰਨਾ
           git clone --depth 1 https://github.com/Sflex0719/m3u.git temp_repo
           
-          # ਸਾਰੀਆਂ ਫਾਈਲਾਂ ਕਾਪੀ ਕਰਨਾ, ਪਰ .git ਅਤੇ .github ਫੋਲਡਰ ਨੂੰ ਛੱਡ ਕੇ
+          # ਸਾਰੀਆਂ ਫਾਈਲਾਂ ਕਾਪੀ ਕਰਨਾ (.git ਅਤੇ .github ਛੱਡ ਕੇ)
           rsync -av --exclude='.git' --exclude='.github' temp_repo/ ./
+          
+          # 1. Zio.m3u ਦਾ ਨਾਮ ਬਦլ ਕੇ py.m3u ਰੱਖਣਾ
+          if [ -f "Zio.m3u" ]; then
+            mv Zio.m3u py.m3u
+          fi
+          
+          # 2. ZioMobile.m3u ਦਾ ਨਾਮ ਬਦլ ਕੇ py.m3u8 ਰੱਖਣਾ
+          if [ -f "ZioMobile.m3u" ]; then
+            mv ZioMobile.m3u py.m3u8
+          fi
+          
+          # ਪੁਰਾਣੀਆਂ ਫਾਈਲਾਂ ਨੂੰ ਗਿੱਟ ਵਿੱਚੋਂ ਹਟਾਉਣਾ
+          git rm -f Zio.m3u ZioMobile.m3u || true
           
           # ਟੈਂਪਰੇਰੀ ਫੋਲਡਰ ਨੂੰ ਡਿਲੀਟ ਕਰਨਾ
           rm -rf temp_repo
@@ -33,7 +46,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "ਕੋਈ ਨਵਾਂ ਬਦਲਾਅ ਨਹੀਂ ਹੈ।"
           else
-            git commit -m "Auto-sync update from source repo"
+            git commit -m "Auto-sync: rename to py.m3u and py.m3u8"
             git push
-            echo "ਡਾਟਾ ਸਫਲਤਾਪੂਰਵਕ ਅੱਪਡੇਟ ਹੋ ਗਿਆ ਹੈ!"
+            echo "ਡਾਟਾ ਸਫਲਤਾਪੂਰਵਕ ਅੱਪਡੇਟ ਅਤੇ ਰੀਨੇਮ ਹੋ ਗਿਆ ਹੈ!"
           fi
