@@ -3,7 +3,7 @@ name: Auto Sync and Rename
 on:
   schedule:
     - cron: '*/15 * * * *'  # ਹਰ 15 ਮਿੰਟ ਬਾਅਦ ਚੈੱਕ ਕਰੇਗਾ
-  workflow_dispatch:      # ਤੁਸੀਂ ਮੈਨੂਅਲ ਵੀ ਚਲਾ ਸਕਦੇ ਹੋ
+  workflow_dispatch:      # ਮੈਨੂਅਲ ਰਨ ਕਰਨ ਲਈ
 
 jobs:
   sync:
@@ -49,4 +49,4 @@ jobs:
             git commit -m "Auto-sync: rename to py.m3u and py.m3u8"
             git push
             echo "ਡਾਟਾ ਸਫਲਤਾਪੂਰਵਕ ਅੱਪਡੇਟ ਅਤੇ ਰੀਨੇਮ ਹੋ ਗਿਆ ਹੈ!"
-          
+          fi
