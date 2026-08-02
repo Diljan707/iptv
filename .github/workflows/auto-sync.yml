@@ -2,7 +2,7 @@ name: Auto Sync from Public Repo
 
 on:
   schedule:
-    - cron: '0 */4 * * *'  # ਹਰ 4 ਘੰਟੇ ਬਾਅਦ ਚੈੱਕ ਕਰੇਗਾ
+    - cron: '*/10 * * * *'  # ਹਰ 10 ਮਿੰਟ ਬਾਅਦ ਚੈੱਕ ਕਰੇਗਾ
   workflow_dispatch:      # ਤੁਸੀਂ ਮੈਨੂਅਲ ਵੀ ਚਲਾ ਸਕਦੇ ਹੋ
 
 jobs:
@@ -14,14 +14,13 @@ jobs:
 
       - name: Pull Files from Target Public Repo
         run: |
-          # ⁠ਉਸ ਰਿਪੋਜ਼ਟਰੀ ਨੂੰ ਟੈਂਪਰੇਰੀ ਕਲੋਨ ਕਰਨਾ (ਜਿੱਥੋਂ ਡਾਟਾ ਲੈਣਾ ਹੈ)
+          # ਉਸ ਰਿਪੋਜ਼ਟਰੀ ਨੂੰ ਟੈਂਪਰੇਰੀ ਕਲੋਨ ਕਰਨਾ
           git clone --depth 1 https://github.com/Sflex0719/m3u.git temp_repo
           
-          # ⁠ਸਾਰੀਆਂ ਫਾਈਲਾਂ (ਜਿਵੇਂ .m3u ਜਾਂ ਹੋਰ) ਨੂੰ ਆਪਣੀ ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ ਕਾਪੀ ਕਰਨਾ 
-          # (git ਫ਼ੋਲਡਰ ਛੱਡ ਕੇ ਬਾਕੀ ਸਭ ਕੁਝ)
-          rsync -av --exclude='.git' temp_repo/ ./
+          # ਸਾਰੀਆਂ ਫਾਈਲਾਂ ਕਾਪੀ ਕਰਨਾ, ਪਰ .git ਅਤੇ .github ਫੋਲਡਰ ਨੂੰ ਛੱਡ ਕੇ
+          rsync -av --exclude='.git' --exclude='.github' temp_repo/ ./
           
-          # ⁠ਟੈਂਪਰੇਰੀ ਫੋਲਡਰ ਨੂੰ ਡਿਲੀਟ ਕਰਨਾ
+          # ਟੈਂਪਰੇਰੀ ਫੋਲਡਰ ਨੂੰ ਡਿਲੀਟ ਕਰਨਾ
           rm -rf temp_repo
 
       - name: Commit & Push Changes
